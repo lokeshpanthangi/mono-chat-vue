@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Chat interface dark theme colors */
-    --background: 212 12% 16%;
+    --background: 212 12% 12%;
     --foreground: 0 0% 95%;
 
     --card: 212 12% 18%;
