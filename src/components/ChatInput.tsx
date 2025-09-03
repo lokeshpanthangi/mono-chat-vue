@@ -9,7 +9,7 @@ interface ChatInputProps {
 
 export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
   const [message, setMessage] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,6 +32,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
+    setIsTyping(e.target.value.length > 0);
     
     // Auto-resize textarea
     if (textareaRef.current) {
@@ -42,8 +43,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <div className={`relative flex items-end bg-input rounded-3xl border border-border shadow-lg transition-all duration-300 ${
-        isFocused ? 'border-ring shadow-xl scale-[1.02]' : 'hover:shadow-xl hover:scale-[1.01]'
+      <div className={`relative flex items-end bg-input rounded-3xl border shadow-lg transition-all duration-300 animate-pulse-glow ${
+        isTyping ? 'border-ring' : 'border-border hover:border-border/80'
       } ${disabled ? 'opacity-60' : ''}`}>
         
         <Button
@@ -60,8 +61,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
           value={message}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           placeholder="Ask anything"
           disabled={disabled}
           rows={1}

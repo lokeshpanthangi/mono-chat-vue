@@ -38,9 +38,6 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, isLoading })
                   : 'text-foreground'
               }`}>
                 {message.text}
-                {message.isStreaming && (
-                  <span className="inline-block w-2 h-5 bg-foreground/60 ml-1 animate-pulse"></span>
-                )}
               </div>
             </div>
 

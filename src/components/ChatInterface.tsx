@@ -46,20 +46,24 @@ export const ChatInterface = () => {
     setTimeout(() => {
       setIsLoading(false);
       
-      // Stream the response character by character
-      let currentIndex = 0;
+      // Stream the response word by word
+      const words = fullResponse.split(' ');
+      let currentWordIndex = 0;
+      
       const streamInterval = setInterval(() => {
+        const currentText = words.slice(0, currentWordIndex + 1).join(' ');
+        
         setMessages(prev => 
           prev.map(msg => 
             msg.id === aiMessageId 
-              ? { ...msg, text: fullResponse.slice(0, currentIndex + 1) }
+              ? { ...msg, text: currentText }
               : msg
           )
         );
         
-        currentIndex++;
+        currentWordIndex++;
         
-        if (currentIndex >= fullResponse.length) {
+        if (currentWordIndex >= words.length) {
           clearInterval(streamInterval);
           setMessages(prev => 
             prev.map(msg => 
@@ -69,7 +73,7 @@ export const ChatInterface = () => {
             )
           );
         }
-      }, 30);
+      }, 100);
     }, 800);
   };
 
