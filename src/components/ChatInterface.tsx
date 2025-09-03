@@ -24,9 +24,9 @@ export const ChatInterface = () => {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Move input to bottom after first message
+    // Move input to bottom after first message with smooth transition
     if (inputPosition === 'center') {
-      setInputPosition('bottom');
+      setTimeout(() => setInputPosition('bottom'), 150);
     }
 
     // Create AI message placeholder
@@ -41,7 +41,7 @@ export const ChatInterface = () => {
     setMessages(prev => [...prev, aiMessage]);
 
     // Simulate streaming response
-    const fullResponse = "I'm a simple AI assistant. I can help you with various tasks and answer your questions. What would you like to know more about?";
+    const fullResponse = "I'm Shravan GPT, your AI assistant. I can help you with various tasks and answer your questions. What would you like to know more about?";
     
     setTimeout(() => {
       setIsLoading(false);
@@ -80,35 +80,33 @@ export const ChatInterface = () => {
   const hasMessages = messages.length > 0;
 
   return (
-    <div className="flex flex-col min-h-screen bg-background transition-all duration-500">
-      <div className="flex-1 flex flex-col">
-        {inputPosition === 'center' && (
-          <div className="flex-1 flex items-center justify-center px-4">
-            <div className="text-center max-w-2xl w-full animate-fade-in">
-              <h1 className="text-4xl font-medium text-foreground mb-8">
-                What can I help with?
-              </h1>
-              <div className="animate-pulse-glow">
-                <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
-              </div>
+    <div className="relative z-10 flex flex-col h-screen overflow-hidden">
+      {inputPosition === 'center' && (
+        <div className="flex-1 flex items-center justify-center px-4 transition-all duration-700 ease-out">
+          <div className="text-center max-w-2xl w-full animate-fade-in">
+            <h1 className="text-4xl font-medium text-foreground mb-8 transition-all duration-500">
+              What can I help with?
+            </h1>
+            <div className="transform transition-all duration-500 ease-out scale-110">
+              <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} isCenter={true} />
             </div>
           </div>
-        )}
-        
-        {inputPosition === 'bottom' && (
-          <>
-            <div className="flex-1 overflow-hidden animate-slide-down">
-              <MessageList messages={messages} isLoading={isLoading} />
+        </div>
+      )}
+      
+      {inputPosition === 'bottom' && (
+        <>
+          <div className="flex-1 overflow-hidden animate-slide-in-from-top">
+            <MessageList messages={messages} isLoading={false} />
+          </div>
+          
+          <div className="flex-shrink-0 border-t border-border/20 bg-background/80 backdrop-blur-sm animate-slide-in-from-bottom">
+            <div className="max-w-4xl mx-auto p-4 transform transition-all duration-500 ease-out">
+              <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} isCenter={false} />
             </div>
-            
-            <div className="animate-slide-down">
-              <div className="max-w-4xl mx-auto p-4">
-                <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

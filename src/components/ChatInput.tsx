@@ -5,11 +5,12 @@ import { Send, Mic, Paperclip } from 'lucide-react';
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   disabled?: boolean;
+  isCenter?: boolean;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled }) => {
+export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled, isCenter = false }) => {
   const [message, setMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,7 +33,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
-    setIsTyping(e.target.value.length > 0);
     
     // Auto-resize textarea
     if (textareaRef.current) {
@@ -41,19 +41,26 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
     }
   };
 
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
+
   return (
-    <form onSubmit={handleSubmit} className="w-full">
-      <div className={`relative flex items-end bg-input rounded-3xl border shadow-lg transition-all duration-300 animate-pulse-glow ${
-        isTyping ? 'border-ring' : 'border-border hover:border-border/80'
+    <form onSubmit={handleSubmit} className="w-full group">
+      <div className={`relative flex items-end bg-input/50 backdrop-blur-sm rounded-3xl border-2 shadow-lg transition-all duration-300 ease-out transform ${
+        isFocused 
+          ? 'border-ring/60 shadow-xl scale-[1.02] bg-input/70' 
+          : 'border-border/30 hover:border-border/50 hover:shadow-md hover:scale-[1.01]'
       } ${disabled ? 'opacity-60' : ''}`}>
         
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className="absolute left-3 bottom-3 z-10 h-8 w-8 text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-110"
+          className={`absolute left-3 bottom-3 z-10 h-8 w-8 text-muted-foreground transition-all duration-300 ease-out ${
+            isFocused ? 'text-foreground scale-110' : 'hover:text-foreground hover:scale-105'
+          }`}
         >
-          <Paperclip className="h-4 w-4" />
+          <Paperclip className="h-4 w-4 transition-transform duration-300" />
         </Button>
         
         <textarea
@@ -61,10 +68,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
           value={message}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Ask anything"
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder="Let's make it Work..."
           disabled={disabled}
           rows={1}
-          className="flex-1 min-h-[52px] max-h-[120px] pl-12 pr-20 py-3 bg-transparent border-0 resize-none text-foreground placeholder:text-muted-foreground focus:outline-none text-base leading-6 overflow-hidden transition-all duration-200"
+          className={`flex-1 ${isCenter ? 'min-h-[60px]' : 'min-h-[52px]'} max-h-[120px] pl-12 pr-20 py-3 bg-transparent border-0 resize-none text-foreground placeholder:text-muted-foreground focus:outline-none ${isCenter ? 'text-lg' : 'text-base'} leading-6 overflow-hidden transition-all duration-300 ease-out placeholder:transition-colors placeholder:duration-300`}
           style={{ 
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
@@ -76,9 +85,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
             type="button"
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-110"
+            className={`h-8 w-8 text-muted-foreground transition-all duration-300 ease-out ${
+              isFocused ? 'text-foreground scale-110' : 'hover:text-foreground hover:scale-105'
+            }`}
           >
-            <Mic className="h-4 w-4" />
+            <Mic className="h-4 w-4 transition-transform duration-300" />
           </Button>
           
           <Button
@@ -86,13 +97,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled })
             variant="ghost"
             size="icon"
             disabled={!message.trim() || disabled}
-            className={`h-8 w-8 transition-all duration-200 ${
+            className={`h-8 w-8 transition-all duration-300 ease-out ${
               message.trim() && !disabled
-                ? 'text-foreground hover:text-primary hover:scale-110 hover:bg-accent'
+                ? 'text-foreground hover:text-primary hover:scale-110 hover:bg-accent/50 active:scale-95'
                 : 'text-muted-foreground/50 cursor-not-allowed'
             }`}
           >
-            <Send className="h-4 w-4" />
+            <Send className={`h-4 w-4 transition-all duration-300 ${
+              message.trim() && !disabled ? 'group-hover:translate-x-0.5' : ''
+            }`} />
           </Button>
         </div>
       </div>
